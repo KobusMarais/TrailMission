@@ -1,55 +1,13 @@
-"use client";
+'use client';
+export const dynamic = 'force-dynamic';
+import ScanClient from "./ScanClient";
 
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { supabase } from '../../lib/supabaseClient';
+import { Suspense } from 'react';
 
+// app/scan/page.tsx (server component)
 export default function ScanPage() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const peakId = searchParams.get('peak_id');
-
-  const [status, setStatus] = useState('Processing...');
-
-  useEffect(() => {
-    const logSummit = async () => {
-      // 1. Check if user is logged in
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setStatus('You must be logged in to log a summit.');
-        router.push('/login');
-        return;
-      }
-
-      if (!peakId) {
-        setStatus('Invalid or missing peak ID.');
-        return;
-      }
-
-      // 2. Insert into summits table
-      const { data, error } = await supabase
-        .from('summits')
-        .insert({ user_id: user.id, peak_id: Number(peakId) });
-
-      if (error) {
-        console.log(user.id);
-        console.log(Number(peakId));
-        console.error('Summit error:', error.message);
-        setStatus('An error occurred.');
-      } else {
-        setStatus('Summit logged successfully! 🎉');
-      }
-    };
-
-    logSummit();
-  }, [peakId, router]);
-
-  return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <p>{status}</p>
-      <button onClick={() => router.push('/profile')} className="mt-4 p-2 bg-blue-500 text-white rounded">
-        Go to Profile
-      </button>
-    </div>
+  return (<Suspense fallback={<p>Loading...</p>}>
+    <ScanClient />
+  </Suspense>
   );
 }
