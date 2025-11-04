@@ -8,16 +8,16 @@ export default function QRScanner({ onScan }: { onScan: (code: string) => void }
     const targetId = 'html5qr-reader'
     const config = { fps: 10, qrbox: 250 };
 
-    const scanner = new Html5QrcodeScanner(targetId, config);
+    const scanner = new Html5QrcodeScanner(targetId, config, false);
     scanner.render((decodedText: string) => {
       onScan(decodedText);
-      scanner.clear().catch(() => {});
+      scanner.clear().catch(() => { });
     }, (err) => {
       console.debug('scan error', err);
     });
 
     return () => {
-      scanner.clear().catch(() => {});
+      scanner.clear().catch(() => { });
     }
   }, [onScan]);
 
