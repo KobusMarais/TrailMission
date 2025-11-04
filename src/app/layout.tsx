@@ -1,4 +1,5 @@
 //import './globals.css'
+import Link from 'next/link'
 import type { ReactNode } from 'react'
 
 export const metadata = {
@@ -16,7 +17,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </head>
         <div className="min-h-screen bg-slate-50">
           <header className="p-4 bg-white shadow-sm">
-            <div className="max-w-3xl mx-auto">Trail App</div>
+            <Link
+              href="/"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Trail Mission
+            </Link>
           </header>
           <main className="max-w-3xl mx-auto p-4">{children}</main>
         </div>
