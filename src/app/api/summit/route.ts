@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { createSupabaseAdmin } from '@/lib/supabaseClient'
+import { createSupabaseAdmin } from '@/lib/supabaseClient';
 import { prisma } from '@/lib/prisma'
 
 export async function POST(req: NextRequest) {
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     if (recent) return NextResponse.json({ error: 'too_soon_same_peak' }, { status: 429 })
 
     const todayStart = new Date()
-    todayStart.setHours(0,0,0,0)
+    todayStart.setHours(0, 0, 0, 0)
     const todayCount = await prisma.summit.count({ where: { userId: user.id, createdAt: { gte: todayStart } } })
 
     let multiplier = 1
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       if (peak.lat && peak.lon) {
         const dx = (gps.lat - peak.lat) * 111000
         const dy = (gps.lon - peak.lon) * 111000 * Math.cos((peak.lat * Math.PI) / 180)
-        const dist = Math.sqrt(dx*dx + dy*dy)
+        const dist = Math.sqrt(dx * dx + dy * dy)
         if (dist <= 75 && (gps.accuracy ?? 999) <= 50) {
           verified = true
           points += 5
@@ -48,17 +48,19 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const summit = await prisma.summit.create({ data: {
-      userId: user.id,
-      peakId: peak.id,
-      clientLocalId: clientLocalId,
-      deviceTime: deviceTime ? new Date(deviceTime) : null,
-      gpsLat: gps?.lat,
-      gpsLon: gps?.lon,
-      gpsAccuracy: gps?.accuracy,
-      verified,
-      pointsEarned: points,
-    }})
+    const summit = await prisma.summit.create({
+      data: {
+        userId: user.id,
+        peakId: peak.id,
+        clientLocalId: clientLocalId,
+        deviceTime: deviceTime ? new Date(deviceTime) : null,
+        gpsLat: gps?.lat,
+        gpsLon: gps?.lon,
+        gpsAccuracy: gps?.accuracy,
+        verified,
+        pointsEarned: points,
+      }
+    })
 
     return NextResponse.json({ accepted: true, summitId: summit.id, verified, points })
   } catch (err) {
