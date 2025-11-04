@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  username      String?   @unique
+  email         String?   @unique
+  firstName     String?
+  lastName      String?
+  gender        String?
+  createdAt     DateTime  @default(now())
+  summits       Summit[]
+  role          String    @default("user")
+}
+
+model Peak {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String?
+  lat         Float?
+  lon         Float?
+  elevation   Int?
+  isSummit    Boolean   @default(true)
+  basePoints  Int       @default(10)
+  createdAt   DateTime  @default(now())
+  summits     Summit[]
+}
+
+model Summit {
+  id            String   @id @default(cuid())
+  userId        String
+  peakId        String
+  clientLocalId String?  // for offline idempotency
+  createdAt     DateTime @default(now())
+  deviceTime    DateTime?
+  gpsLat        Float?
+  gpsLon        Float?
+  gpsAccuracy   Int?
+  verified      Boolean  @default(false)
+  visible       Boolean  @default(true)
+  pointsEarned  Int      @default(0)
+
+  user User @relation(fields:[userId], references:[id])
+  peak Peak @relation(fields:[peakId], references:[id])
+}
