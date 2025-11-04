@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </head>
         <div className="min-h-screen bg-slate-50">
           <header className="p-4 bg-white shadow-sm">
-            <div className="max-w-3xl mx-auto">Trail App MVP</div>
+            <div className="max-w-3xl mx-auto">Trail App</div>
           </header>
           <main className="max-w-3xl mx-auto p-4">{children}</main>
         </div>
