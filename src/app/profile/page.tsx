@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation';
 interface Summit {
   id: string;
   peak: {
-    points:number;
+    id: number;
+    points: number;
     name: string;
   };
   date: string;
@@ -50,23 +51,22 @@ export default function ProfilePage() {
       // Fetch summits for this user
       const { data: summitData, error: summitError } = await supabase
         .from('summits')
-        .select(`
-          id,
-          user_id,
-          date,
-          peak:peaks (
-            id,
-            name,
-            points
-          ),
-          hidden
-        `)
+        .select('id,user_id,date,hidden,peak:peaks(id,name,points)')
         .eq('user_id', userData.supabase_id);
 
       if (summitError) {
         setErrorMsg(summitError.message);
       } else {
-        setSummits(summitData);
+        setSummits(
+          (summitData ?? []).map(s => ({
+            id: s.id,
+            user_id: Number(s.user_id),
+            date: s.date,
+            hidden: s.hidden,
+            peak: s.peak as unknown as { id: number; name: string; points: number }, // tell TS it's an object
+          }))
+        );
+
       }
 
       setLoading(false);
