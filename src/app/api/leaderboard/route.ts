@@ -28,15 +28,16 @@ export async function GET() {
   const usersMap = Object.fromEntries((usersData ?? []).map(u => [u.supabase_id, u]));
 
   // 4️⃣ calculate scores
-  const scores: Record<string, { name: string; peaks: number; points: number }> = {};
+  const scores: Record<string, { user_id: string; name: string; peaks: number; points: number }> = {};
   summitsData.forEach(s => {
     const user = usersMap[s.user_id];
     const peak = peaksMap[s.peak_id];
     if (!user || !peak) return;
 
-    if (!scores[s.user_id]) scores[s.user_id] = { name: `${user.name} ${user.surname}`, peaks: 0, points: 0 };
+    if (!scores[s.user_id]) scores[s.user_id] = { user_id: s.user_id, name: `${user.name} ${user.surname}`, peaks: 0, points: 0 };
     scores[s.user_id].points += peak.points;
     scores[s.user_id].peaks += 1;
+    scores[s.user_id].user_id = s.user_id;
   });
 
   // 5️⃣ convert to array and sort descending

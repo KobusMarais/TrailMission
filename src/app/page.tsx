@@ -1,9 +1,23 @@
 'use client'
 
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabaseClient'; // Adjust path if needed
 
 export default function HomePage() {
   const router = useRouter();
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      // If logged in, store the user's Supabase ID
+      if (data?.user) {
+        setUserId(data.user.id);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const navigate = (path: string) => {
     router.push(path);
@@ -36,7 +50,13 @@ export default function HomePage() {
         </button>
 
         <button
-          onClick={() => navigate('/profile')}
+          onClick={() => {
+            if (userId) {
+              navigate(`/profile/${userId}`);
+            } else {
+              navigate('/login'); // Redirect to login if not signed in
+            }
+          }}
           className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded"
         >
           My Profile

@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 interface LeaderboardEntry {
   id: string;
   name: string;
   peaks: number;
   points: number;
+  user_id: string;
 }
 
 export default function LeaderboardPage() {
@@ -57,7 +59,11 @@ export default function LeaderboardPage() {
               className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}
             >
               <td className="border px-4 py-2">{index + 1}</td>
-              <td className="border px-4 py-2">{entry.name}</td>
+              <td className="border px-4 py-2">
+                <Link href={`/profile/${entry.user_id}`}>
+                  {entry.name}
+                </Link>
+              </td>
               <td className="border px-4 py-2">{entry.peaks}</td>
               <td className="border px-4 py-2 text-right">{entry.points}</td>
             </tr>

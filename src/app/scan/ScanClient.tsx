@@ -9,6 +9,7 @@ export default function ScanClient() {
   const peakId = searchParams.get('peak_id');
 
   const [status, setStatus] = useState('Processing...');
+  const [userId, setUserId] = useState<string | null>(null); // store logged-in user ID
 
   useEffect(() => {
     const logSummit = async () => {
@@ -18,6 +19,8 @@ export default function ScanClient() {
         router.push('/login');
         return;
       }
+
+      setUserId(user.id); // save user ID for the button
 
       if (!peakId) {
         setStatus('Invalid or missing peak ID.');
@@ -42,8 +45,16 @@ export default function ScanClient() {
   return (
     <div className="flex flex-col items-center justify-center h-screen" >
       <p>{status} </p>
-      < button onClick={() => router.push('/profile')
-      } className="mt-4 p-2 bg-blue-500 text-white rounded" >
+      <button
+        onClick={() => {
+          if (userId) {
+            router.push(`/profile/${userId}`); // correct template literal
+          } else {
+            router.push('/login'); // fallback if user ID not available
+          }
+        }}
+        className="mt-4 p-2 bg-blue-500 text-white rounded"
+      >
         Go to Profile
       </button>
     </div>
